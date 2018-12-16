@@ -49,14 +49,17 @@ def sort_classifications():
 
 
 def write(df, i, index_list, count, start, end, label, eol=None):
-    speech_samples = samples[int(start):int(end)]
-    wavfile.write("{}audio_to_txt/{}-{}-{}.wav".format(
-            df['file'][i], label, start, end), sample_rate, speech_samples)
+    speech_samples = samples[int(start):int(end) + 3000]
+    if end - start > 24000:
+        # avoid aislate false positives.
+        wavfile.write("{}audio_to_txt/{}-{}-{}.wav".format(
+                df['file'][i], label, start, end), sample_rate, speech_samples)
     if eol != 'EOL':
         start = df.loc[index_list[count + 1], 'start']
         end = df.loc[index_list[count + 1], 'end']
         label = df.loc[index_list[count + 1], 'label']
         return start, end, label
+
 
 
 def write_audio_classification(df):
@@ -93,6 +96,7 @@ def write_audio_classification(df):
             count += 1
 
 
+
 if __name__ == '__main__':
     args = get_args()
     sample_rate, samples = wavfile.read(args.input)
@@ -104,5 +108,7 @@ if __name__ == '__main__':
         r, audio = au_texto.read_wav(wav)
         dataset_to_classify = dataset_to_classify.append(
                 au_texto.audio_text(wav, r, audio, df), ignore_index=True)
+    audio_name = args.input.split('/')[1]
     dataset_to_classify.to_csv(('data_interversions_set/'
-                               'interversion_to_classify.csv'), index=False)
+                               f'{audio_name}_interversion_to_classify.csv'),
+                               index=False)
