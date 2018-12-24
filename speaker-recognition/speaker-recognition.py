@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python2
 # -*- coding: UTF-8 -*-
 # File: speaker-recognition.py
@@ -11,6 +12,8 @@ import os
 import csv
 import itertools
 import scipy.io.wavfile as wavfile
+
+
 
 sys.path.append(os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
@@ -43,6 +46,10 @@ Examples:
                        help='Input Files(to predict) or Directories(to enroll)',
                        required=True)
 
+    parser.add_argument('-c', '--current',
+                        help='input current directory',
+                        required=True)
+
     parser.add_argument('-m', '--model',
                        help='Model file to save(in enroll) or use(in predict)',
                        required=True)
@@ -53,6 +60,7 @@ Examples:
 
     ret = parser.parse_args()
     return ret
+
 
 def task_enroll(input_dirs, output_model, input_ubm=None):
     m = ModelInterface()
@@ -98,9 +106,9 @@ def task_enroll(input_dirs, output_model, input_ubm=None):
     m.train()
     m.dump(output_model)
 
-def task_predict(input_files, input_model):
+def task_predict(input_files, input_current, input_model):
     m = ModelInterface.load(input_model)
-    with open('/host/home/ricardo/Documents/TFM/codigo/predictions.csv','w') as pred:
+    with open('/host{0}/predictions.csv'.format(input_current),'w') as pred:
         ss = csv.writer(pred, delimiter=',')
         ss.writerow(['score','label','file'])
         for f in glob.glob(os.path.expanduser(input_files)):
@@ -112,7 +120,6 @@ def task_predict(input_files, input_model):
                 if i == 0 and label in ['Albert','Casado','Pedro', 'Iglesias']:
                    ss.writerow([score,label,f])
                 i+=1
-
 if __name__ == '__main__':
     global args
     args = get_args()
@@ -120,4 +127,4 @@ if __name__ == '__main__':
     if task == 'enroll':
         task_enroll(args.input, args.model, args.ubm)
     elif task == 'predict':
-        task_predict(args.input, args.model)
+        task_predict(args.input, args.current,args.model)
