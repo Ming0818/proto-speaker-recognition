@@ -9,7 +9,7 @@ RUN apt-get update \
   && apt-get install -y nano \
   && mv proto-speaker-recognition ./usr/src \
   && git clone https://github.com/mediadataes/proto-speaker-recognition \
-  && apt-get install -y python3-pip python3-dev \
+  && apt-get install -y python3-pip python3.6 \
   && cd /usr/local/bin \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip

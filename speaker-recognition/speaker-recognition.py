@@ -82,7 +82,7 @@ def task_enroll(input_dirs, output_model, input_ubm=None):
         for wav in wavs:
             fs, signal = read_wav(wav)
             m.enroll(label, fs, signal)
-   
+
     if input_ubm != None:
         input_ubm = [os.path.expanduser(k) for k in input_ubm.strip().split()]
         dirs = itertools.chain(*(glob.glob(d) for d in input_ubm))
